@@ -1,5 +1,6 @@
 class Maksukortti:
     def __init__(self, saldo):
+        # saldo senteissä
         self.saldo = saldo
 
     def lataa_rahaa(self, lisays):
