@@ -22,9 +22,6 @@ class UI():
         [print(line) for line in list]
         print()
 
-    def print_usage(self):
-        print("This is usage\n")
-
     def loop(self):
         while(True):
             functions = {
