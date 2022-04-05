@@ -1,6 +1,8 @@
+from services.kare_service import KareService
+
 class UI():
     def __init__(self):
-        pass
+        self.kare_service = KareService()
 
     def start(self):
         self.print_hello()
@@ -13,21 +15,34 @@ class UI():
         list = [
             "help\t\t\t\tprints this screen",
             "exit\t\t\t\texits this program",
-            "upload filename\t\t\tuploads given file to the system",
-            "process filename\t\tprocess the given soundfile (give filename without extension)",
-            "get filename savename\t\tsaves the given file with a given name (give filename without extension)"
+            "setdir path\t\t\tsets the path for load/save directory ----- (todo)",
+            "import filename\t\t\timports given file to the system",
+            "export filename savename\texports the given file with a given name (give filename without extension)",
+            "process filename\t\tprocess the given soundfile (give filename without extension) ----- (todo)",
+            "list\t\t\t\tlists all uploaded files"
         ]
 
         print("List of commands:\n")
         [print(line) for line in list]
         print()
 
+    def listfiles(self):
+        files = self.kare_service.get_sound_object_names()
+        if len(files) == 0:
+            print("No saved soundfiles\n")
+        else:
+            print("List of saved soundfiles:\n")
+            [print(file) for file in files]
+            print()
+
     def loop(self):
         while(True):
             functions = {
-                "upload": None,
+                "setdir": None,
+                "import": self.kare_service.import_soundfile,
                 "process": None,
-                "get": None}
+                "export": self.kare_service.export_soundfile
+                }
 
             user_in = input("command: ").split()
 
@@ -38,7 +53,16 @@ class UI():
             if user_in[0] == "exit":
                 break
 
+            if user_in[0] == "list":
+                self.listfiles()
+                continue
+
             if user_in[0] not in functions.keys():
                 print(f"\"{user_in[0]}\" is not a command (type \"help\" for help)")
+                continue
+
+            if len(user_in) < 2:
+                print("missing arguments (type \"help\" for help)")
+                continue
 
             functions[user_in[0]](user_in[1:])
