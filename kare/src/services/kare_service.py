@@ -22,7 +22,7 @@ class KareService:
             filename = path_filename
 
         """ 
-        Tee myöhemmin..
+        Tee myöhemmin
         if filename[0] in self.sound_objects.keys():
             self.ui...
         """ 
