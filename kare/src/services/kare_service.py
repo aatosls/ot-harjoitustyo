@@ -2,6 +2,7 @@ from entities.sound_object import SoundObject
 
 import soundfile as sf
 
+
 class KareService:
     def __init__(self):
         self.sound_objects = {}
@@ -12,7 +13,7 @@ class KareService:
 
     def import_soundfile(self, args):
         filename = args[0]
-        
+
         data, samplerate = sf.read(filename)
 
         path_filename = filename.rsplit(".", 1)[0]
@@ -25,18 +26,20 @@ class KareService:
         Tee myöhemmin
         if filename[0] in self.sound_objects.keys():
             self.ui...
-        """ 
+        """
 
         self.sound_objects[filename] = SoundObject(data, samplerate)
 
     def export_soundfile(self, args):
         filename, savename = args
         if not isinstance(filename, str) or not isinstance(savename, str):
-            raise ValueError("\"filename\" and \"savename\" must be string objects")
+            raise ValueError(
+                "\"filename\" and \"savename\" must be string objects")
 
         export_data = self.sound_objects[filename].data
         export_samplerate = self.sound_objects[filename].samplerate
         try:
             sf.write(savename, export_data, export_samplerate)
         except:
-            raise RuntimeError(f"Something went wrong when exporting {filename} as {savename}")
+            raise RuntimeError(
+                f"Something went wrong when exporting {filename} as {savename}")

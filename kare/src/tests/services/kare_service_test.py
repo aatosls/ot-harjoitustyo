@@ -1,6 +1,7 @@
 import unittest
 from services.kare_service import KareService
 
+
 class TestKareService(unittest.TestCase):
     def setUp(self):
         self.kare_service = KareService()

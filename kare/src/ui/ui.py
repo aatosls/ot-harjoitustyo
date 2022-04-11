@@ -1,5 +1,6 @@
 from services.kare_service import KareService
 
+
 class UI():
     def __init__(self):
         self.kare_service = KareService()
@@ -42,7 +43,7 @@ class UI():
                 "import": self.kare_service.import_soundfile,
                 "process": None,
                 "export": self.kare_service.export_soundfile
-                }
+            }
 
             user_in = input("command: ").split()
 
@@ -58,7 +59,8 @@ class UI():
                 continue
 
             if user_in[0] not in functions.keys():
-                print(f"\"{user_in[0]}\" is not a command (type \"help\" for help)")
+                print(
+                    f"\"{user_in[0]}\" is not a command (type \"help\" for help)")
                 continue
 
             if len(user_in) < 2:
