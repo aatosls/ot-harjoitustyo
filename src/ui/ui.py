@@ -1,5 +1,4 @@
 from services.kare_service import KareService
-import os
 
 
 class UI():
