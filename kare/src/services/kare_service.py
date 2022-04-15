@@ -12,6 +12,9 @@ class KareService:
         return list(self.sound_objects.keys())
 
     def import_soundfile(self, args):
+        if len(args) < 1:
+            return 1 # arguments missing
+
         filename = args[0]
 
         data, samplerate = sf.read(filename)
@@ -31,6 +34,9 @@ class KareService:
         self.sound_objects[filename] = SoundObject(data, samplerate)
 
     def export_soundfile(self, args):
+        if len(args) < 2:
+            return 1 # missing arguments
+
         filename, savename = args
         if not isinstance(filename, str) or not isinstance(savename, str):
             raise ValueError(

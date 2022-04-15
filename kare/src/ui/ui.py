@@ -1,18 +1,16 @@
 from services.kare_service import KareService
+import os
 
 
 class UI():
     def __init__(self):
         self.kare_service = KareService()
 
-    def start(self):
-        self.print_hello()
-        self.loop()
 
     def print_hello(self):
         print("\nHello!\nThis is Kare, soundfile processing using wavelet manipulation\nType \"help\" for help\n")
 
-    def print_help(self):
+    def print_help(self,_):
         list = [
             "help\t\t\t\tprints this screen",
             "exit\t\t\t\texits this program",
@@ -27,7 +25,7 @@ class UI():
         [print(line) for line in list]
         print()
 
-    def listfiles(self):
+    def listfiles(self,_):
         files = self.kare_service.get_sound_object_names()
         if len(files) == 0:
             print("No saved soundfiles\n")
@@ -36,35 +34,58 @@ class UI():
             [print(file) for file in files]
             print()
 
+    def ask_overwrite_rename(self):
+        user_in = input("name is already in use, overwrite or rename [o/r] (leave empty to abort): ")
+        while(True):
+            if user_in == "o":
+                return "_overwrite"
+            if user_in == "r":
+                name = input("new name: ")
+                return name
+            if user_in == "":
+                return
+            user_in = input("what?: ")
+
+    def do_import(self,args):
+        filename = args[0]
+        used_names = self.kare_service.get_sound_object_names()
+        if filename in used_names:
+            ret = self.ask_overwrite_rename()
+            if ret == "_overwrite":
+                self.kare_service.import_soundfile(filename)
+                return
+            if ret == None:
+                return
+            filename = ret
+        self.kare_service.import_soundfile(filename)
+        
+    def start(self):
+        self.print_hello()
+        self.loop()
+
     def loop(self):
         while(True):
             functions = {
                 "setdir": None,
-                "import": self.kare_service.import_soundfile,
+                "import": self.do_import,
                 "process": None,
-                "export": self.kare_service.export_soundfile
+                "export": self.kare_service.export_soundfile,
+                "help": self.print_help,
+                "list": self.listfiles
             }
 
             user_in = input("command: ").split()
 
-            if len(user_in) == 0 or user_in[0] == "help":
-                self.print_help()
-                continue
-
             if user_in[0] == "exit":
                 break
-
-            if user_in[0] == "list":
-                self.listfiles()
-                continue
 
             if user_in[0] not in functions.keys():
                 print(
                     f"\"{user_in[0]}\" is not a command (type \"help\" for help)")
                 continue
 
-            if len(user_in) < 2:
+            ret = functions[user_in[0]](user_in[1:])
+
+            if ret == 1:
                 print("missing arguments (type \"help\" for help)")
                 continue
-
-            functions[user_in[0]](user_in[1:])
