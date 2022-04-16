@@ -11,13 +11,9 @@ class KareService:
     def get_sound_object_names(self):
         return list(self.sound_objects.keys())
 
-    def import_soundfile(self, args):
-        if len(args) < 1:
-            return 1 # arguments missing
+    def import_soundfile(self, filename, path=""):
 
-        filename = args[0]
-
-        data, samplerate = sf.read(filename)
+        data, samplerate = sf.read(path+filename)
 
         path_filename = filename.rsplit(".", 1)[0]
         if "/" in path_filename:
@@ -25,22 +21,9 @@ class KareService:
         else:
             filename = path_filename
 
-        """ 
-        Tee myöhemmin
-        if filename[0] in self.sound_objects.keys():
-            self.ui...
-        """
-
         self.sound_objects[filename] = SoundObject(data, samplerate)
 
-    def export_soundfile(self, args):
-        if len(args) < 2:
-            return 1 # missing arguments
-
-        filename, savename = args
-        if not isinstance(filename, str) or not isinstance(savename, str):
-            raise ValueError(
-                "\"filename\" and \"savename\" must be string objects")
+    def export_soundfile(self, filename, savename):
 
         export_data = self.sound_objects[filename].data
         export_samplerate = self.sound_objects[filename].samplerate

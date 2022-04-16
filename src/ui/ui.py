@@ -37,25 +37,35 @@ class UI():
         user_in = input("name is already in use, overwrite or rename [o/r] (leave empty to abort): ")
         while(True):
             if user_in == "o":
-                return "_overwrite"
+                return 1
             if user_in == "r":
-                name = input("new name: ")
-                return name
+                return 2
             if user_in == "":
-                return
+                return 0
             user_in = input("what?: ")
+
+    def ask_filename(self):
+        while(True):
+            name = input("new name: ")
+            if name in self.kare_service.get_sound_object_names():
+                print("name already in use")
+                continue
+            if len(name) < 1:
+                print("name is too short")
+                continue
+            return name
 
     def do_import(self,args):
         filename = args[0]
         used_names = self.kare_service.get_sound_object_names()
+        
         if filename in used_names:
             ret = self.ask_overwrite_rename()
-            if ret == "_overwrite":
-                self.kare_service.import_soundfile(filename)
+            if ret == 0: # abort
                 return
-            if ret == None:
-                return
-            filename = ret
+            if ret == 2: # rename
+                filename = self.ask_filename()
+
         self.kare_service.import_soundfile(filename)
         
     def start(self):
