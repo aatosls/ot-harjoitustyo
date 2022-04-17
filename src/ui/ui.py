@@ -13,10 +13,10 @@ class UI():
         list = [
             "help\t\t\t\tprints this screen",
             "exit\t\t\t\texits this program",
-            "setdir path\t\t\tsets the path for load/save directory ----- (todo)",
-            "import filename\t\t\timports given file to the system",
-            "export filename savename\texports the given file with a given name (give filename without extension)",
-            "process filename\t\tprocess the given soundfile (give filename without extension) ----- (todo)",
+            "setdir \"path\"\t\t\tsets the path for load/save directory ----- (todo)",
+            "import \"filename\"\t\timports given file to the system",
+            "export \"filename\" 'savename'\texports the given file with a given name (give filename without extension)",
+            "process \"filename\"\t\tprocess the given soundfile (give filename without extension) ----- (todo)",
             "list\t\t\t\tlists all uploaded files"
         ]
 
@@ -58,6 +58,8 @@ class UI():
     def do_import(self,args):
         filename = args[0]
         used_names = self.kare_service.get_sound_object_names()
+
+        print(filename)
         
         if filename in used_names:
             ret = self.ask_overwrite_rename()
@@ -67,7 +69,20 @@ class UI():
                 filename = self.ask_filename()
 
         self.kare_service.import_soundfile(filename)
-        
+
+    def parse(self,text):
+        text = list(text)
+        in_quotes = False
+        for i in range(len(text)):
+            if text[i] == '"':
+                in_quotes = True if in_quotes == False else False
+            if text[i] == " " and not in_quotes:
+                text[i] = "#"
+        text = "".join(text)
+        text = text.replace('"','')
+        text = text.split("#")
+        return text
+
     def start(self):
         self.print_hello()
         self.loop()
@@ -83,17 +98,22 @@ class UI():
                 "list": self.listfiles
             }
 
-            user_in = input("command: ").split()
+            user_in = input("command: ")
+            in_args = self.parse(user_in)
 
-            if user_in[0] == "exit":
-                break
-
-            if user_in[0] not in functions.keys():
-                print(
-                    f"\"{user_in[0]}\" is not a command (type \"help\" for help)")
+            if len(user_in) == 0:
+                self.print_help(0)
                 continue
 
-            ret = functions[user_in[0]](user_in[1:])
+            if in_args[0] == "exit":
+                break
+
+            if in_args[0] not in functions.keys():
+                print(
+                    f"\"{in_args[0]}\" is not a command (type \"help\" for help)")
+                continue
+
+            ret = functions[in_args[0]](in_args[1:])
 
             if ret == 1:
                 print("missing arguments (type \"help\" for help)")

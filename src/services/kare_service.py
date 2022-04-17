@@ -14,7 +14,6 @@ class KareService:
     def import_soundfile(self, filename, path=""):
 
         data, samplerate = sf.read(path+filename)
-
         path_filename = filename.rsplit(".", 1)[0]
         if "/" in path_filename:
             path, filename = path_filename.rsplit("/", 1)
